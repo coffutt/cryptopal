@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-from hex2base64 import hex2base64
+from binascii import unhexlify
 
 def xor(a, b):
-    return hex(int(a, 16) ^ int(b, 16))
+    a, b = map(unhexlify, [a, b])
+    return ''.join([hex(ord(i) ^ ord(j))[2:] for i,j in zip(a,b)])
 
 if __name__ == "__main__":
-    import sys
-    print xor(sys.argv[1], sys.argv[2])
+    print xor('1c0111001f010100061a024b53535009181c', '686974207468652062756c6c277320657965')
