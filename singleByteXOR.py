@@ -16,7 +16,7 @@ def bruteBreak(hexstr):
         if leader[0] < tScore:
             leader = (tScore, res)
 
-    return { 'val': leader[1], 'score': leader[0] }
+    return leader
 
 if __name__ == '__main__':
     print bruteBreak('1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736')

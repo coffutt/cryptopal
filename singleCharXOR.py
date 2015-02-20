@@ -2,16 +2,13 @@
 
 from singleByteXOR import bruteBreak
 
-def findEncrypted(file):
-    winner = { 'score': 0, 'val': None }
-    with open(file) as f:
-        for line in f:
-            c = bruteBreak(line.rstrip('\n'))
-            if (c['score'] > winner['score']):
-                winner = c
+def compare(x, y):
+    y = bruteBreak(y.rstrip('\n'))
+    return x if x[0] > y[0] else y
 
-    return winner['val']
-        # return max(f, key=lambda line: bruteBreak(line.rstrip('\n'))['score'])
+def findEncrypted(file):
+    with open(file) as f:
+        return reduce(compare, f, (0, None))[1]
 
 if __name__ == '__main__':
     print findEncrypted('./data/4.txt')
