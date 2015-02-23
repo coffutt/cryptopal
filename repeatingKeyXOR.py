@@ -2,7 +2,7 @@
 
 from binascii import hexlify
 
-def xorEncrypt(plaintext, key):
+def repeating_key_xor(plaintext, key):
     encrypted = ''
     keylen = len(key)
     for i in range(0, len(plaintext), keylen):
@@ -11,4 +11,4 @@ def xorEncrypt(plaintext, key):
     return hexlify(encrypted)
 
 if __name__ == '__main__':
-    print xorEncrypt('Burning \'em, if you ain\'t quick and nimble\nI go crazy when I hear a cymbal', 'ICE')
+    print repeating_key_xor('Burning \'em, if you ain\'t quick and nimble\nI go crazy when I hear a cymbal', 'ICE')
