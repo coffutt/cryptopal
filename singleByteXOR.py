@@ -8,7 +8,7 @@ def score(s):
 
 def brute_break(hexstr, ishex = True):
     leader = (0, None, None)
-    decoded = unhexlify(hexstr)
+    decoded = unhexlify(hexstr) if ishex else hexstr
     for i in range(256):
         res = [chr(ord(s) ^ i) for s in decoded]
         t_score = score(res)
