@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 import base64
-from singleByteXOR import brute_break as brute_break_str
+from challenge3 import brute_break as brute_break_str
 from sys import maxint as MAX_NUM
-from repeatingKeyXOR import repeating_key_xor
+from challenge5 import repeating_key_xor
 from binascii import unhexlify
 import itertools
 
