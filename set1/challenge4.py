@@ -9,4 +9,4 @@ def find_encrypted(file):
         return max(map(brute_break, trim(f)), key=lambda x: x[0])[1]
 
 if __name__ == '__main__':
-    print find_encrypted('./data/4.txt')
+    print find_encrypted('../data/4.txt')
