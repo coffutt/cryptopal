@@ -32,6 +32,6 @@ def brute_break(data):
     return unhexlify(repeating_key_xor(data, key))
 
 if __name__ == '__main__':
-    with open('../data/6.txt') as f:
+    with open('./data/6.txt') as f:
         import base64
         print brute_break(base64.b64decode(f.read()))
