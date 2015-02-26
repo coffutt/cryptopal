@@ -13,7 +13,7 @@ def find_ecb_ciphers(ciphers):
     return filter(lambda l: l[1] > 0, t_lines)
 
 if __name__ == '__main__':
-    with open('../data/8.txt') as f:
+    with open('./data/8.txt') as f:
         from binascii import unhexlify
         data = map(lambda l: unhexlify(l.rstrip()), f.readlines())
         print find_ecb_ciphers(data)

@@ -10,6 +10,6 @@ def aes_ecb_encrypt(data, key):
     return AES.new(key, AES.MODE_ECB).encrypt(data)
 
 if __name__ == '__main__':
-    with open('../data/7.txt') as f:
+    with open('./data/7.txt') as f:
         data = base64.b64decode(f.read())
         print aes_ecb_decrypt(data, 'YELLOW SUBMARINE')
