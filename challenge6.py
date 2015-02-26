@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import base64
 from challenge3 import brute_break as brute_break_str
 from sys import maxint as MAX_NUM
 from challenge5 import repeating_key_xor
@@ -22,16 +21,17 @@ def guess_key_len(data):
 
     return best_guess[1]
 
-def brute_break(file):
-    with open(file) as f:
-        data = base64.b64decode(f.read())
-
-    key_len = guess_key_len(data)
+def guess_key(data, key_len=None):
+    key_len = guess_key_len(data) if key_len == None else key_len
     blocks = [data[i:i+key_len] for i in range(0, len(data)-key_len, key_len)]
     transposed = [''.join(i) for i in zip(*blocks)]
-    key = ''.join(map(lambda x: brute_break_str(x, ishex=False)[2], transposed))
+    return ''.join(map(lambda x: brute_break_str(x, ishex=False)[2], transposed))
 
+def brute_break(data):
+    key = guess_key(data)
     return unhexlify(repeating_key_xor(data, key))
 
 if __name__ == '__main__':
-    print brute_break('./data/6.txt')
+    with open('./data/6.txt') as f:
+        import base64
+        print brute_break(base64.b64decode(f.read()))

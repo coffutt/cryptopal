@@ -2,7 +2,7 @@
 
 from binascii import unhexlify
 
-def score(s):
+def score_plaintext(s):
     char_count = len(filter(lambda x: 'a'<=x<='z' or 'A'<=x<='Z' or x==' ', s))
     return float(char_count) / len(s)
 
@@ -11,7 +11,7 @@ def brute_break(hexstr, ishex = True):
     decoded = unhexlify(hexstr) if ishex else hexstr
     for i in range(256):
         res = [chr(ord(s) ^ i) for s in decoded]
-        t_score = score(res)
+        t_score = score_plaintext(res)
         if leader[0] < t_score:
             leader = (t_score, ''.join(res), chr(i))
 
