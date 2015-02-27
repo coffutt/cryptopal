@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from base64 import b64decode
-from challenge6 import guess_key_len
 from challenge7 import aes_ecb_encrypt
 from challenge9 import pkcs7_pad
 import os
