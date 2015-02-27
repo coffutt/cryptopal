@@ -7,28 +7,27 @@ from challenge8 import ecb_score
 from challenge9 import pkcs7_pad
 from challenge10 import aes_cbc_encrypt
 
-
 def rand_bytes(length=16):
     return os.urandom(length)
 
 def pad(data):
     return pkcs7_pad(rand_bytes(randint(5,10)) + data + rand_bytes(randint(5,10)))
 
-def encrypt_random(data):
+def encryption_oracle(data):
     key = rand_bytes()
     padded = pad(data)
 
     if bool(randbits(1)):
+        print 'Using ECB'
         return aes_ecb_encrypt(padded, key)
     else:
+        print 'Using CBC'
         return aes_cbc_encrypt(padded, key, rand_bytes())
 
-def encryption_oracle(cipher_text):
+def detect_encryption(oracle):
+    cipher_text = oracle(chr(0) * 48)
     return 'ECB' if ecb_score(cipher_text) > 0 else 'CBC'
 
 if __name__ == '__main__':
-    with open('./data/8.txt') as f:
-        lines = f.readlines();
-        for i in range(len(lines)):
-            print (i, encryption_oracle(lines[i]))
-    # print encryption_oracle(ecb_encrypted)
+    for i in range(0, 10):
+        print 'Detected: ' + detect_encryption(encryption_oracle)
