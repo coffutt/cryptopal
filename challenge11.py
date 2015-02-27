@@ -3,8 +3,10 @@
 import os
 from random import randint, getrandbits as randbits
 from challenge7 import aes_ecb_encrypt
-from challenge10 import aes_cbc_encrypt
+from challenge8 import ecb_score
 from challenge9 import pkcs7_pad
+from challenge10 import aes_cbc_encrypt
+
 
 def rand_bytes(length=16):
     return os.urandom(length)
@@ -21,8 +23,12 @@ def encrypt_random(data):
     else:
         return aes_cbc_encrypt(padded, key, rand_bytes())
 
-def encryption_orcale(cipher_text):
-
+def encryption_oracle(cipher_text):
+    return 'ECB' if ecb_score(cipher_text) > 0 else 'CBC'
 
 if __name__ == '__main__':
-    print encrypt_random('Some data')
+    with open('./data/8.txt') as f:
+        lines = f.readlines();
+        for i in range(len(lines)):
+            print (i, encryption_oracle(lines[i]))
+    # print encryption_oracle(ecb_encrypted)
