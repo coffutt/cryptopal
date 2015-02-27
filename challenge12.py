@@ -10,7 +10,7 @@ def rand_bytes(length=16):
     return os.urandom(length)
 
 def ecb_oracle(to_decrypt):
-    key = '\xAB' * 16
+    key = rand_bytes()
     def encrypt(data):
         return aes_ecb_encrypt(pkcs7_pad(data + to_decrypt), key)
     return encrypt
@@ -38,18 +38,17 @@ def break_ecb(data):
 
     characters = [chr(i) for i in range(256)]
     def next_char(known):
-        dictionary = {}
-        block_number = len(known) / block_size
+        if len(known) == len(data):
+            return known
+
+        b_num = len(known) / block_size
         b_start, b_end = block_number*block_size, (block_number+1)*block_size
         base_pad = 'A' * (block_size - 1 - (len(known) % block_size))
 
         dictionary = { oracle(base_pad+known+ch)[b_start:b_end]: ch for ch in characters }
-        return known + dictionary[oracle(base_pad)[b_start:b_end]]
+        return next_char(known + dictionary[oracle(base_pad)[b_start:b_end]])
 
-    known = ''
-    for i in range(0, 40):
-        known = next_char(known)
-        print known
+    return next_char('')
 
 if __name__ == '__main__':
     data = b64decode('Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK')
