@@ -13,11 +13,12 @@ def rand_bytes(length=16):
 def pad(data):
     return pkcs7_pad(rand_bytes(randint(5,10)) + data + rand_bytes(randint(5,10)))
 
-def encryption_oracle(data):
-    key = rand_bytes()
+def encryption_oracle(data, key=None, mode='ecb'):
+    if not key:
+        key = rand_bytes()
     padded = pad(data)
 
-    if bool(randbits(1)):
+    if mode == 'ecb':
         print 'Using ECB'
         return aes_ecb_encrypt(padded, key)
     else:
