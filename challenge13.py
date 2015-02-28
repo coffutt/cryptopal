@@ -16,9 +16,19 @@ def gen_cookie(email):
     email = email.replace('&', '').replace('=', '')
     return encode_cookie({ 'email': email, 'uid': '10', 'role': 'user' })
 
-def encrypt_cookie(cookie):
-    key = rand_bytes()
-    return (aes_ecb_encrypt(pkcs7_pad(cookie), key), key)
+def encrypt_cookie(cookie, key):
+    return aes_ecb_encrypt(pkcs7_pad(cookie), key)
+
+def unpad_string(padded_str):
+    pad_len = ord(padded_str[-1])
+    return padded_str[:-pad_len] if pad_len < 16 else padded_str
+
+def read_cookie(encrypted_cookie, key):
+    return decode_cookie(unpad(aes_ecb_decrypt(encrypted_cookie, key)))
 
 if __name__ == '__main__':
-    encrypted, key = encrypt_cookie(gen_cookie('coffutt@udel.edu'))
+    key = rand_bytes()
+    encrypted = encrypt_cookie(gen_cookie('coffutt@udel.edu'), key)
+
+    # use email somehow to pad the encoded string and then a similar attack
+    # to the one used in challenge 12 to get an admin user
