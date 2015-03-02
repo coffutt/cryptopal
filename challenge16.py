@@ -23,8 +23,7 @@ def is_admin(encrypted_cookie, key):
     return next((True for k,v in pairs if k=='admin' and v == 'true'), False)
 
 def build_admin_cookie(oracle):
-    payload = ('A' * 16) + chr(ord(';')-1) + 'admin' + chr(ord('=')-1) + 'true' + chr(ord(';')-1) + ('A' * 4)
-    x = oracle(payload)
+    x = oracle(('A' * 16) + ':admin<true:' + ('A' * 4))
     return x[0:32] + chr(ord(x[32])^1) + x[33:38] + chr(ord(x[38])^1) + x[39:43] + chr(ord(x[43])^1) + x[44:]
 
 if __name__ == '__main__':
