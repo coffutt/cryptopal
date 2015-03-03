@@ -1,4 +1,4 @@
-    #!/usr/bin/python
+#!/usr/bin/python
 
 from string import split as str_split
 from challenge9 import pkcs7_pad
