@@ -11,54 +11,44 @@ from challenge15 import unpad_pkcs7
 def clean_line(line):
     return base64.b64decode(string.rstrip(line))
 
-class PaddingOracle():
+def str_xor(a, b):
+    return ''.join([chr(ord(a) ^ ord(b)) for a,b in zip(a,b)])
 
-    def __init__(self):
-        self.key = rand_bytes()
-        self.iv = rand_bytes()
-        with open('./data/17.txt') as f:
-            self.lines = map(clean_line, f.readlines())
+all_chrs = [chr(i) for i in range(256)]
 
-    def get_iv(self): return self.iv
+def padding_oracle():
+    with open('./data/17.txt') as f:
+        line = clean_line(random.choice(f.readlines()))
+    key, iv = rand_bytes(), rand_bytes()
 
-    def get_cookie(self):
-        padded_line = pkcs7_pad(random.choice(self.lines))
-        return aes_cbc_encrypt(padded_line, self.key, self.iv)
-
-    def is_valid_padding(self, encrypted_cookie):
-        decrypted = aes_cbc_decrypt(encrypted_cookie, self.key, self.iv)
+    def is_valid_padding(encrypted_cookie):
         try:
-            unpad_pkcs7(decrypted)
+            unpad_pkcs7(aes_cbc_decrypt(encrypted_cookie, key, iv))
             return True
         except Exception:
             return False
 
-def crack_crypto(cipher_text, oracle, iv):
-    all_chrs = [chr(i) for i in range(256)]
+    return (aes_cbc_encrypt(pkcs7_pad(line), key, iv), is_valid_padding, iv)
 
-    def build_intermediate(cipher_text):
+def crack_crypto(cipher_text, oracle, iv):
+    def build_intermediate(c_block):
         intermediate = ''
 
         for i in range(1, 17):
             i_pos = 16 - i
-            l_str = 'A' * i_pos
+            l_str = rand_bytes(i_pos)
             r_str = ''.join([chr(i ^ ord(c)) for c in intermediate])
-            for ch in all_chrs:
-                if oracle(l_str + ch + r_str + cipher_text):
-                    intermediate = chr(i ^ ord(ch)) + intermediate
-                    break
+
+            ch = filter(lambda ch: oracle(l_str + ch + r_str + c_block), all_chrs)[0]
+            intermediate = chr(i ^ ord(ch)) + intermediate
 
         return intermediate
 
     c_blocks = get_blocks(cipher_text, 16)
     i_blocks = map(build_intermediate, c_blocks)
 
-    def build_plain(mem, pair):
-        return mem + ''.join([chr(ord(a) ^ ord(b)) for a,b in zip(*pair)])
-
-    c_blocks.insert(0, iv)
-    return reduce(build_plain, zip(c_blocks, i_blocks), '')
+    pairs = zip([iv] + c_blocks, i_blocks)
+    return reduce(lambda mem, pair: mem + str_xor(*pair), pairs, '')
 
 if __name__ == '__main__':
-    oracle = PaddingOracle()
-    print crack_crypto(oracle.get_cookie(), oracle.is_valid_padding, oracle.get_iv())
+    print crack_crypto(*padding_oracle())
