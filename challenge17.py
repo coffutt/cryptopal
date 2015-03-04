@@ -35,8 +35,7 @@ def crack_crypto(cipher_text, oracle, iv):
         intermediate = ''
 
         for i in range(1, 17):
-            i_pos = 16 - i
-            l_str = rand_bytes(i_pos)
+            l_str = rand_bytes(16 - i)
             r_str = ''.join([chr(i ^ ord(c)) for c in intermediate])
 
             ch = filter(lambda ch: oracle(l_str + ch + r_str + c_block), all_chrs)[0]
