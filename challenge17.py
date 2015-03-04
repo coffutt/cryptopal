@@ -34,28 +34,30 @@ class PaddingOracle():
             return False
 
 def crack_crypto(cipher_text, oracle, iv):
-    blocks = get_blocks(cipher_text, 16)
-    intermediate_blocks = []
     all_chrs = [chr(i) for i in range(256)]
 
-    for block in blocks:
+    def build_intermediate(cipher_text):
         intermediate = ''
+
         for i in range(1, 17):
+            i_pos = 16 - i
+            l_str = 'A' * i_pos
+            r_str = ''.join([chr(i ^ ord(c)) for c in intermediate])
             for ch in all_chrs:
-                end = ''.join([chr(i ^ ord(c)) for c in intermediate])
-                if oracle(rand_bytes(16-i) + ch + end):
-                    intermediate = chr((ord(ch) ^ i)) + intermediate
+                if oracle(l_str + ch + r_str + cipher_text):
+                    intermediate = chr(i ^ ord(ch)) + intermediate
                     break
 
-        intermediate_blocks.append(intermediate)
+        return intermediate
 
-    plain_text = ''
-    for i in range(len(intermediate_blocks)):
-        i_block = intermediate_blocks[i]
-        plain_text += ''.join([chr(ord(p[0]) ^ ord(p[1])) for p in zip(block, iv)])
-        iv = blocks[i]
+    c_blocks = get_blocks(cipher_text, 16)
+    i_blocks = map(build_intermediate, c_blocks)
 
-    return plain_text
+    def build_plain(mem, pair):
+        return mem + ''.join([chr(ord(a) ^ ord(b)) for a,b in zip(*pair)])
+
+    c_blocks.insert(0, iv)
+    return reduce(build_plain, zip(c_blocks, i_blocks), '')
 
 if __name__ == '__main__':
     oracle = PaddingOracle()
