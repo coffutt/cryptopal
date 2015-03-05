@@ -5,7 +5,7 @@ from challenge7 import aes_ecb_decrypt, aes_ecb_encrypt
 
 ascii_zero = '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 
-def get_blocks(data, size):
+def get_blocks(data, size=16):
     return [data[i:i+size] for i in range(0, len(data), size)]
 
 def aes_cbc_decrypt(cipher_text, key, iv=ascii_zero):
