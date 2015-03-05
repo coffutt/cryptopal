@@ -1,12 +1,9 @@
 #!/usr/bin/python
 
 from challenge7 import aes_ecb_encrypt
-from challenge10 import get_blocks
 from challenge17 import str_xor
 from sys import maxint as MAX_INT
 import struct
-
-import binascii
 
 def little_endian_counter(nonce):
     count = 0
